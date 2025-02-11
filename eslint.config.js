@@ -1,16 +1,23 @@
-export default {
-    root: true,
-    parser: "@typescript-eslint/parser",
-    plugins: ["@typescript-eslint"],
-    extends: [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
-    ],
-    rules: {
-        "no-unused-vars": "error",
-        "no-undef": "error",
-        "prefer-const": "error",
-        "no-console": "warn"
+// @ts-check
+
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import perfectionist from "eslint-plugin-perfectionist";
+
+export default tseslint.config(
+  {
+    ignores: ["**/*.js"],
+  },
+  eslint.configs.recommended,
+  tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
-    ignorePatterns: ["dist", "node_modules"]
-};
+  },
+  perfectionist.configs["recommended-natural"],
+);

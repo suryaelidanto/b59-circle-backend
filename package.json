@@ -28,13 +28,15 @@
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
     "eslint": "^9.20.0",
+    "eslint-plugin-perfectionist": "^4.8.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.0"
   },
   "lint-staged": {
     "*.ts": [
