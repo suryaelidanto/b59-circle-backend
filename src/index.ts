@@ -5,6 +5,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
+console.log('testing');
+
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to Circle API 😁!');
 });
