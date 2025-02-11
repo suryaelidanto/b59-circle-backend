@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "circle backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "circle-backend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/surya-elidanto/circle-backend.git"
+  },
+  "author": "surya elidanto",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
