@@ -1,1 +1,1 @@
-echo "Pre commit berjalan!"
+npx lint-staged
