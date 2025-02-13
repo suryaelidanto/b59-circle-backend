@@ -4,8 +4,8 @@ type UserProfile = User & {
   fullName: Profile['fullName'];
 };
 
-export type CreateUserDTO = Pick<
+export type RegisterDTO = Pick<
   UserProfile,
   'email' | 'username' | 'password' | 'fullName'
 >;
-export type UpdateUserDTO = Pick<UserProfile, 'email' | 'username'>;
+export type LoginDTO = Pick<User, 'email' | 'password'>;

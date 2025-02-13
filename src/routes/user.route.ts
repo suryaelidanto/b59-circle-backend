@@ -1,10 +1,12 @@
-import express, { Request, Response } from 'express';
-import { prisma } from '../libs/prisma';
+import express from 'express';
 import userController from '../controllers/user.controller';
 
 const router = express.Router();
 
 router.get('/', userController.getUsers);
+router.get('/:id', userController.getUserById);
 router.post('/', userController.createUser);
+router.patch('/:id', userController.updateUserById);
+router.delete('/:id', userController.deleteUserById);
 
 export default router;

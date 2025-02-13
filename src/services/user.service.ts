@@ -1,4 +1,4 @@
-import { CreateUserDTO } from '../dtos/user.dto';
+import { CreateUserDTO, UpdateUserDTO } from '../dtos/user.dto';
 import { prisma } from '../libs/prisma';
 
 class UserService {
@@ -6,8 +6,47 @@ class UserService {
     return await prisma.user.findMany();
   }
 
+  async getUserById(id: string) {
+    return await prisma.user.findFirst({
+      where: { id },
+      include: {
+        profile: true,
+      },
+    });
+  }
+
+  async getUserByEmail(email: string) {
+    return await prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
   async createUser(data: CreateUserDTO) {
-    return await prisma.user.create({ data });
+    const { fullName, ...userData } = data;
+
+    return await prisma.user.create({
+      data: {
+        ...userData,
+        profile: {
+          create: {
+            fullName,
+          },
+        },
+      },
+    });
+  }
+
+  async deleteUserById(id: string) {
+    return await prisma.user.delete({
+      where: { id },
+    });
+  }
+
+  async updateUserById(id: string, data: UpdateUserDTO) {
+    return await prisma.user.update({
+      where: { id },
+      data,
+    });
   }
 }
 

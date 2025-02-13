@@ -1,23 +1,81 @@
 import { Request, Response } from 'express';
 import userService from '../services/user.service';
+import {
+  createUserSchema,
+  updateUserSchema,
+} from '../utils/schemas/user.schema';
 
 class UserController {
   async getUsers(req: Request, res: Response) {
-    const users = await userService.getUsers();
-    res.json(users);
+    try {
+      const users = await userService.getUsers();
+      res.json(users);
+    } catch (error) {
+      res.json(error);
+    }
+  }
+
+  async getUserById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = await userService.getUserById(id);
+      res.json(user);
+    } catch (error) {
+      res.json(error);
+    }
   }
 
   async createUser(req: Request, res: Response) {
-    //TODO: add validator
-    const { email, username, password } = req.body;
+    try {
+      const body = req.body;
+      const validatedBody = await createUserSchema.validateAsync(body);
+      const user = await userService.createUser(validatedBody);
+      res.json(user);
+    } catch (error) {
+      res.json(error);
+    }
+  }
 
-    const user = await userService.createUser({
-      email,
-      username,
-      password,
-    });
+  async updateUserById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const body = req.body;
 
-    res.json(user);
+      let user = await userService.getUserById(id);
+
+      if (!user) {
+        res.status(404).json({
+          message: 'User not found!',
+        });
+        return;
+      }
+
+      const { email, username } = await updateUserSchema.validateAsync(body);
+
+      if (email != '') {
+        user.email = email;
+      }
+
+      if (username != '') {
+        user.username = username;
+      }
+
+      const updatedUser = await userService.updateUserById(id, user);
+      res.json(updatedUser);
+    } catch (error) {
+      res.json(error);
+    }
+  }
+
+  async deleteUserById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const user = await userService.deleteUserById(id);
+      res.json(user);
+    } catch (error) {
+      res.json(error);
+    }
   }
 }
 
