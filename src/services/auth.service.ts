@@ -1,4 +1,4 @@
-import { LoginDTO, RegisterDTO } from '../dtos/auth.dto';
+import { LoginDTO, RegisterDTO, ResetPasswordDTO } from '../dtos/auth.dto';
 import { prisma } from '../libs/prisma';
 
 class AuthService {
@@ -13,6 +13,15 @@ class AuthService {
             fullName,
           },
         },
+      },
+    });
+  }
+
+  async resetPassword(email: string, hashedNewPassword: string) {
+    return await prisma.user.update({
+      where: { email },
+      data: {
+        password: hashedNewPassword,
       },
     });
   }
