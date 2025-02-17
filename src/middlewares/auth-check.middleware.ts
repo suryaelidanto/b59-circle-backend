@@ -2,7 +2,16 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 export function authCheck(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers['authorization'] || '';
+  /* #swagger.security = [{
+            "bearerAuth": []
+    }] */
+
+  let token = req.headers['authorization'] || '';
+
+  if (token.split(' ').length > 1) {
+    token = token.split(' ')[1];
+  }
+
   const jwtSecret = process.env.JWT_SECRET || '';
   const user = jwt.verify(token, jwtSecret);
 
