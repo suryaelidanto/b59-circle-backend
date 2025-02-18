@@ -1,29 +1,29 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import threadService from '../services/thread.service';
 import { createThreadSchema } from '../utils/schemas/thread.schema';
 import { v2 as cloudinary } from 'cloudinary';
 
 class ThreadController {
-  async getThreads(req: Request, res: Response) {
+  async getThreads(req: Request, res: Response, next: NextFunction) {
     try {
       const threads = await threadService.getThreads();
       res.json(threads);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async getThreadById(req: Request, res: Response) {
+  async getThreadById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const thread = await threadService.getThreadById(id);
       res.json(thread);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async createThread(req: Request, res: Response) {
+  async createThread(req: Request, res: Response, next: NextFunction) {
     /*  #swagger.requestBody = {
               required: true,
               content: {
@@ -50,7 +50,7 @@ class ThreadController {
       const thread = await threadService.createThread(userId, validatedBody);
       res.json(thread);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 }

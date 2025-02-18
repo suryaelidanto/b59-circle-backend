@@ -7,6 +7,7 @@ import threadRouter from './routes/thread.route';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDoc from '../swagger/swagger-output.json';
 import cors from 'cors';
+import { errorHandler } from './middlewares/error.middleware';
 
 dotenv.config();
 
@@ -43,10 +44,13 @@ app.use(
     },
   }),
 );
+
 app.use(rootRouter);
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/threads', threadRouter);
+
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.info(`Server is running at port ${port}`);

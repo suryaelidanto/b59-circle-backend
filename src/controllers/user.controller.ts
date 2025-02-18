@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import userService from '../services/user.service';
 import {
   createUserSchema,
@@ -6,37 +6,37 @@ import {
 } from '../utils/schemas/user.schema';
 
 class UserController {
-  async getUsers(req: Request, res: Response) {
+  async getUsers(req: Request, res: Response, next: NextFunction) {
     try {
       const users = await userService.getUsers();
       res.json(users);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async getUserById(req: Request, res: Response) {
+  async getUserById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const user = await userService.getUserById(id);
       res.json(user);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async createUser(req: Request, res: Response) {
+  async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       const body = req.body;
       const validatedBody = await createUserSchema.validateAsync(body);
       const user = await userService.createUser(validatedBody);
       res.json(user);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async updateUserById(req: Request, res: Response) {
+  async updateUserById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const body = req.body;
@@ -63,18 +63,18 @@ class UserController {
       const updatedUser = await userService.updateUserById(id, user);
       res.json(updatedUser);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async deleteUserById(req: Request, res: Response) {
+  async deleteUserById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
 
       const user = await userService.deleteUserById(id);
       res.json(user);
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 }

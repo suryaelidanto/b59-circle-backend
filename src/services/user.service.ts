@@ -18,6 +18,9 @@ class UserService {
   async getUserByEmail(email: string) {
     return await prisma.user.findUnique({
       where: { email },
+      include: {
+        profile: true,
+      },
     });
   }
 

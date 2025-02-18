@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { RegisterDTO } from '../dtos/auth.dto';
 import { transporter } from '../libs/nodemailer';
@@ -13,7 +13,7 @@ import {
 } from '../utils/schemas/auth.schema';
 
 class AuthController {
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     /*  #swagger.requestBody = {
                required: true,
                content: {
@@ -59,16 +59,21 @@ class AuthController {
         },
       );
 
-      res.json({
+      const { password: unusedPassword, ...userResponse } = user;
+
+      res.status(200).json({
         message: 'Login success!',
-        token,
+        data: {
+          user: userResponse,
+          token,
+        },
       });
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async register(req: Request, res: Response) {
+  async register(req: Request, res: Response, next: NextFunction) {
     /*  #swagger.requestBody = {
               required: true,
               content: {
@@ -91,23 +96,39 @@ class AuthController {
       };
 
       const user = await authService.register(registerBody);
-      res.json(user);
+      res.status(200).json({
+        message: 'Register success!',
+        data: { ...user },
+      });
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async check(req: Request, res: Response) {
+  async check(req: Request, res: Response, next: NextFunction) {
     try {
       const payload = (req as any).user;
       const user = await userService.getUserById(payload.id);
-      res.send(user);
+
+      if (!user) {
+        res.status(404).json({
+          message: 'User not found!',
+        });
+        return;
+      }
+
+      const { password: unusedPassword, ...userResponse } = user;
+
+      res.status(200).json({
+        message: 'User check success!',
+        data: { ...userResponse },
+      });
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async forgotPassword(req: Request, res: Response) {
+  async forgotPassword(req: Request, res: Response, next: NextFunction) {
     /*  #swagger.requestBody = {
               required: true,
               content: {
@@ -143,15 +164,15 @@ class AuthController {
       };
 
       await transporter.sendMail(mailOptions);
-      res.json({
+      res.status(200).json({
         message: 'Forgot password link sent!',
       });
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 
-  async resetPassword(req: Request, res: Response) {
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
     /*  #swagger.requestBody = {
                   required: true,
                   content: {
@@ -200,13 +221,15 @@ class AuthController {
 
       const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-      const updatedUserPassword = await authService.resetPassword(
-        user.email,
-        hashedNewPassword,
-      );
-      res.send(updatedUserPassword);
+      const { password, ...updatedUserPassword } =
+        await authService.resetPassword(user.email, hashedNewPassword);
+
+      res.status(200).json({
+        message: 'Reset password success!',
+        data: { ...updatedUserPassword },
+      });
     } catch (error) {
-      res.json(error);
+      next(error);
     }
   }
 }
