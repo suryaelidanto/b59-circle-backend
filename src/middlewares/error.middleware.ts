@@ -22,5 +22,7 @@ export function errorHandler(
     return;
   }
 
-  res.status(500).json({ message: 'Internal Server Error' });
+  res
+    .status(500)
+    .json({ message: `Internal Server Error! Error: ${JSON.stringify(err)}` });
 }

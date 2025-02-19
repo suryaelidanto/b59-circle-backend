@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import threadService from '../services/thread.service';
 import { createThreadSchema } from '../utils/schemas/thread.schema';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import fs from 'fs';
 
 class ThreadController {
   async getThreads(req: Request, res: Response, next: NextFunction) {
@@ -37,18 +38,25 @@ class ThreadController {
       */
 
     try {
-      const uploadResult = await cloudinary.uploader.upload(
-        req.file?.path || '',
-      );
+      let uploadResult: UploadApiResponse = {} as UploadApiResponse;
+
+      if (req.file) {
+        uploadResult = await cloudinary.uploader.upload(req.file?.path || '');
+        fs.unlinkSync(req.file.path);
+      }
+
       const body = {
         ...req.body,
-        images: uploadResult.secure_url,
+        images: uploadResult?.secure_url ?? undefined,
       };
 
       const userId = (req as any).user.id;
       const validatedBody = await createThreadSchema.validateAsync(body);
       const thread = await threadService.createThread(userId, validatedBody);
-      res.json(thread);
+      res.json({
+        message: 'Thread created!',
+        data: { ...thread },
+      });
     } catch (error) {
       next(error);
     }
