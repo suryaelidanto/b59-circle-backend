@@ -4,6 +4,7 @@ import rootRouter from './routes/root.route';
 import authRouter from './routes/auth.route';
 import userRouter from './routes/user.route';
 import threadRouter from './routes/thread.route';
+import likeRouter from './routes/like.route';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDoc from '../swagger/swagger-output.json';
 import cors from 'cors';
@@ -49,6 +50,7 @@ app.use(rootRouter);
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/threads', threadRouter);
+app.use('/likes', likeRouter);
 
 app.use(errorHandler);
 

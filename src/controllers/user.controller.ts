@@ -8,7 +8,8 @@ import {
 class UserController {
   async getUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await userService.getUsers();
+      const search = req.query.search as string;
+      const users = await userService.getUsers(search);
       res.json(users);
     } catch (error) {
       next(error);

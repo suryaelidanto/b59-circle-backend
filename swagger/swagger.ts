@@ -74,6 +74,14 @@ const doc = {
           },
         },
       },
+      CreateLikeDTO: {
+        type: 'object',
+        properties: {
+          threadId: {
+            type: 'string',
+          },
+        },
+      },
     },
   },
   host: 'localhost:3000',

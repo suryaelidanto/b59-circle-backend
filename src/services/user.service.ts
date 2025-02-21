@@ -2,8 +2,29 @@ import { CreateUserDTO, UpdateUserDTO } from '../dtos/user.dto';
 import { prisma } from '../libs/prisma';
 
 class UserService {
-  async getUsers() {
-    return await prisma.user.findMany();
+  async getUsers(search?: string) {
+    if (search) {
+      return await prisma.user.findMany({
+        include: {
+          profile: true,
+        },
+        where: {
+          OR: [
+            {
+              username: {
+                contains: search,
+              },
+            },
+          ],
+        },
+      });
+    }
+
+    return await prisma.user.findMany({
+      include: {
+        profile: true,
+      },
+    });
   }
 
   async getUserById(id: string) {

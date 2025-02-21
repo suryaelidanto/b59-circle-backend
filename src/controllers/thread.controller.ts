@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import threadService from '../services/thread.service';
+import likeService from '../services/like.service';
+
 import { createThreadSchema } from '../utils/schemas/thread.schema';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import fs from 'fs';
@@ -7,8 +9,22 @@ import fs from 'fs';
 class ThreadController {
   async getThreads(req: Request, res: Response, next: NextFunction) {
     try {
+      const userId = (req as any).user.id;
       const threads = await threadService.getThreads();
-      res.json(threads);
+      const newThreads = await Promise.all(
+        threads.map(async (thread) => {
+          const like = await likeService.getLikeById(userId, thread.id);
+          const isLiked = like ? true : false;
+          const likesCount = thread.likes.length;
+
+          return {
+            ...thread,
+            likesCount,
+            isLiked,
+          };
+        }),
+      );
+      res.json(newThreads);
     } catch (error) {
       next(error);
     }

@@ -13,6 +13,7 @@ class ThreadService {
             profile: true,
           },
         },
+        likes: true,
       },
       orderBy: {
         createdAt: 'desc',
