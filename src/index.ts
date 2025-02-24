@@ -1,14 +1,15 @@
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import rootRouter from './routes/root.route';
-import authRouter from './routes/auth.route';
-import userRouter from './routes/user.route';
-import threadRouter from './routes/thread.route';
-import likeRouter from './routes/like.route';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDoc from '../swagger/swagger-output.json';
-import cors from 'cors';
 import { errorHandler } from './middlewares/error.middleware';
+import authRouter from './routes/auth.route';
+import likeRouter from './routes/like.route';
+import rootRouter from './routes/root.route';
+import threadRouter from './routes/thread.route';
+import userRouter from './routes/user.route';
+import replyRouter from './routes/reply.route';
 
 dotenv.config();
 
@@ -51,9 +52,10 @@ app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/threads', threadRouter);
 app.use('/likes', likeRouter);
+app.use('/replies', replyRouter);
 
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.info(`Server is running at port ${port}`);
+  console.info(`🤖 Server is running at port ${port}`);
 });

@@ -1,9 +1,13 @@
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
+import { RedisStore } from 'rate-limit-redis';
 import likeController from '../controllers/like.controller';
 import { authCheck } from '../middlewares/auth-check.middleware';
-import { rateLimit } from 'express-rate-limit';
+import RedisClient from 'ioredis';
 
 const router = express.Router();
+
+const client = new RedisClient();
 
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
@@ -13,7 +17,11 @@ const limiter = rateLimit({
   message: {
     message: 'Too many requests, please try again later.',
   },
-  // store: ... , // Redis, Memcached, etc. See below.
+  // Redis store configuration
+  store: new RedisStore({
+    // @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
+    sendCommand: (...args: string[]) => client.call(...args),
+  }),
 });
 
 router.use(limiter);
