@@ -31,6 +31,7 @@ class ReplyController {
       const threadId = req.params.threadId;
       const body = req.body;
       const userId = (req as any).user.id;
+      console.log(threadId, body, userId);
       const validatedBody = await createReplySchema.validateAsync(body);
       const reply = await replyService.createReply(
         userId,

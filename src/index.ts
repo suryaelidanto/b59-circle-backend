@@ -18,7 +18,11 @@ const port = process.env.PORT;
 
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://b59-circle.vercel.app'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:4173',
+      'https://b59-circle.vercel.app',
+    ],
   }),
 );
 app.use(express.json());

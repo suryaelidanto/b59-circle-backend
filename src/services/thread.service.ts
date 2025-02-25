@@ -14,6 +14,7 @@ class ThreadService {
           },
         },
         likes: true,
+        replies: true,
       },
       take: pagination?.limit,
       skip: pagination?.startIndex,
@@ -28,11 +29,23 @@ class ThreadService {
       where: { id },
       include: {
         user: {
+          omit: {
+            password: true,
+          },
           include: {
             profile: true,
           },
         },
-        replies: true,
+        likes: true,
+        replies: {
+          include: {
+            user: {
+              include: {
+                profile: true,
+              },
+            },
+          },
+        },
       },
     });
   }

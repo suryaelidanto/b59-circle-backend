@@ -26,10 +26,12 @@ class ThreadController {
           const like = await likeService.getLikeById(userId, thread.id);
           const isLiked = like ? true : false;
           const likesCount = thread.likes.length;
+          const repliesCount = thread.replies.length;
 
           return {
             ...thread,
             likesCount,
+            repliesCount,
             isLiked,
           };
         }),
@@ -43,8 +45,28 @@ class ThreadController {
   async getThreadById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+      const userId = (req as any).user.id;
+
       const thread = await threadService.getThreadById(id);
-      res.json(thread);
+
+      if (!thread) {
+        res.status(404).json({
+          message: 'Thread is not found!',
+        });
+        return;
+      }
+
+      const like = await likeService.getLikeById(userId, thread.id);
+      const isLiked = like ? true : false;
+      const likesCount = thread?.likes.length;
+      const repliesCount = thread?.replies.length;
+
+      res.json({
+        ...thread,
+        likesCount,
+        repliesCount,
+        isLiked,
+      });
     } catch (error) {
       next(error);
     }
