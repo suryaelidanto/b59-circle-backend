@@ -1,8 +1,11 @@
 import express from 'express';
 import authController from '../controllers/auth.controller';
 import { authCheck } from '../middlewares/auth-check.middleware';
+import { rateLimit } from '../middlewares/rate-limit.middleware';
 
 const router = express.Router();
+
+router.use(rateLimit('auth'));
 
 router.post('/login', authController.login);
 router.post('/register', authController.register);
