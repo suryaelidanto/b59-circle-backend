@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import threadService from '../services/thread.service';
 import likeService from '../services/like.service';
-
+import threadService from '../services/thread.service';
+import streamifier from 'streamifier';
+import { v2 as cloudinary, UploadStream } from 'cloudinary';
 import { createThreadSchema } from '../utils/schemas/thread.schema';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
-import fs from 'fs';
 
 class ThreadController {
   async getThreads(req: Request, res: Response, next: NextFunction) {
@@ -86,16 +85,30 @@ class ThreadController {
       */
 
     try {
-      let uploadResult: UploadApiResponse = {} as UploadApiResponse;
+      let imageUrl: string = '';
 
       if (req.file) {
-        uploadResult = await cloudinary.uploader.upload(req.file?.path || '');
-        fs.unlinkSync(req.file.path);
+        imageUrl = await new Promise((resolve, reject) => {
+          if (req.file) {
+            try {
+              const stream = cloudinary.uploader.upload_stream(
+                {},
+                (error, result) => {
+                  if (error) return console.error(error);
+                  resolve(result?.secure_url || '');
+                },
+              );
+              streamifier.createReadStream(req.file.buffer).pipe(stream);
+            } catch (error) {
+              reject(error);
+            }
+          }
+        });
       }
 
       const body = {
         ...req.body,
-        images: uploadResult?.secure_url ?? undefined,
+        images: imageUrl || undefined,
       };
 
       const userId = (req as any).user.id;
